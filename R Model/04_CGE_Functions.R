@@ -2,7 +2,7 @@
 
 ## Delta C_i
 
-function_delta_c_i <- function(alpha, beta, price, output, salary, labour, capital, saving){
+function_delta_c_i <- function(alpha, beta, price, output, salary, labour, capital, saving, interest_rate){
   
   delta_c <- rep(0,length(sectors))
   
@@ -19,10 +19,16 @@ function_delta_c_i <- function(alpha, beta, price, output, salary, labour, capit
   ## step 2
   
   temp_primary_factor_df <- data.frame("labour" = labour,
-                                       "Salary" = salary) %>% 
-    mutate(labour_cost = labour * salary)
+                                       "Salary" = salary,
+                                       "capital" = capital,
+                                       "capital_price" = rep(interest_rate)) %>% 
+    mutate(labour_cost = labour * salary) %>% 
+    mutate(capital_cost = capital * interest_rate)
   
-  temp_primary_tot <- sum(temp_primary_factor_df[,"labour_cost"])
+  temp_primary_tot_1 <- sum(temp_primary_factor_df[,"labour_cost"])
+  temp_primary_tot_2 <- sum(temp_primary_factor_df[,"capital_cost"])
+  
+  temp_primary_tot <- temp_primary_tot_1 + temp_primary_tot_2
   
   for(i in 1:length(sectors)){
     
@@ -49,10 +55,13 @@ output_test <- ig_tot_df_2[,"total_demand"]*10^6
 labour_test <- cal_gamma_full_2[,"labour"]
 salary_test <- cal_gamma_full_2[,"salary"]
 alpha_test <- demand_hh_df[,"alph_i"]
+capital_test <- cal_gamma_full_2[,"capital"]
 
 test <- function_delta_c_i(alpha = alpha_test,
                            beta = cal_beta,
                            price = prices_test,
                            output = output_test,
                            labour = labour_test,
-                           salary = salary_test)
+                           salary = salary_test,
+                           capital = capital_test, 
+                           interest_rate = Interst_rate)

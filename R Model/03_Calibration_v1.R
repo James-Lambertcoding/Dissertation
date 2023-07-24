@@ -51,15 +51,32 @@ prim_2015_df <- prim_df %>%
 
 cal_gamma <- data.frame("Sectors" = sectors,
                         "capital_gamma" = rep(0),
-                        "labour_gamma" = rep(0))
+                        "labour_gamma" = rep(0)) %>% 
+  left_join(sala_df, by = "Sectors") %>% 
+  mutate(capital_price = Interst_rate) %>%
+  mutate( capital_cost = 0)  %>% 
+  mutate(capital = 0) %>% 
+  mutate(labour = 0) %>% 
+  mutate(labour_cost = 0)
 
-cal_gamma <- cal_gamma %>% 
-  left_join(sala_df, by = "Sectors")
+
+cal_gamma_full <- cal_gamma
+
+for(i in 1:nrow(cal_gamma_full)){
+  
+  cal_gamma_full[i,"capital"] <- prim_2015_df[4,i+2]*10^6
+  cal_gamma_full[i,"labour"] <- prim_2015_df[5,i+2]
+  cal_gamma_full[i,"capital_cost"] <- cal_gamma_full[i,"capital"]*cal_gamma_full[i,"capital_price"]
+  cal_gamma_full[i,"labour_cost"] <- cal_gamma_full[i,"labour"]*cal_gamma_full[i,"salary"]
+  
+  
+  
+}
 
 for(i in 1:nrow(cal_gamma)){
   
-  cal_gamma[i,"capital_gamma"] <- prim_2015_df[4,i+2]/ig_tot_df_2[i,"total_demand"]
-  cal_gamma[i,"labour_gamma"] <- (prim_2015_df[5,i+2]*cal_gamma[i,"salary"])/(ig_tot_df_2[i,"total_demand"]*10^6)
+  cal_gamma[i,"capital_gamma"] <- cal_gamma_full[i,"capital_cost"]/(ig_tot_df_2[i,"total_demand"]*10^6)
+  cal_gamma[i,"labour_gamma"] <- cal_gamma_full[i,"labour_cost"]/(ig_tot_df_2[i,"total_demand"]*10^6)
   
   
 }
@@ -83,21 +100,10 @@ for(i in 1:nrow(X_ij_b_ij)){
   
 }
 
-cal_gamma_full <- cal_gamma %>% 
-  mutate(capital = 0) %>% 
-  mutate(labour = 0)
 
-for(i in 1:nrow(cal_gamma_full)){
-  
-  cal_gamma_full[i,"capital"] <- prim_2015_df[4,i+2]*10^6
-  cal_gamma_full[i,"labour"] <- prim_2015_df[5,i+2]
-  
-  
-}
 
 cal_gamma_full_2 <- cal_gamma_full %>% 
-  mutate(labour_cost = labour* salary) %>% 
-  mutate(capital_raised = capital ^ capital_gamma) %>% 
+  mutate(capital_raised = capital_cost ^ capital_gamma) %>% 
   mutate(labour_raised = labour_cost ^ labour_gamma)
 
 cal_a_j <-  data.frame("Sectors" = sectors,
@@ -111,5 +117,5 @@ for(i in 1:nrow(cal_a_j)){
 
 ## 3.0 Totals -----
 
-m_bar <- sum(cal_gamma_full_2[,"labour_cost"])
+m_bar <- sum(cal_gamma_full_2[,"labour_cost"]) + sum(cal_gamma_full_2[,"capital_cost"])
 
