@@ -3,7 +3,7 @@
     "path": "F:/My Drive/EMAP/101 Dissertation/Dissertation/R Model/02_read_data_v1.R",
     "project_path": "02_read_data_v1.R",
     "type": "r_source",
-    "hash": "2217467323",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1690199778635.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "36,12",
-        "scrollLine": "14"
+        "cursorPosition": "9,30",
+        "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1690204449,
+    "lastKnownWriteTime": 1690210279,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1690204449296,
+    "last_content_update": 1690210279757,
     "read_only": false,
     "read_only_alternatives": []
 }
