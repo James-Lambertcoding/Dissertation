@@ -1,2 +1,15 @@
 ## Read Data ------------------
 
+## 1.0 Data Names ---------------
+
+hh_name <- "Data/household_T_19_08.csv"
+
+
+## 2.0 Read -------------------
+
+hh_df <- read.csv(file = hh_name, stringsAsFactors = F)
+
+
+## 3.0 Maniulation ------------
+
+hh_df <- hh_df 
