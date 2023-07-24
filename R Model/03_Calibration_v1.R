@@ -75,8 +75,8 @@ for(i in 1:nrow(cal_gamma_full)){
 
 for(i in 1:nrow(cal_gamma)){
   
-  cal_gamma[i,"capital_gamma"] <- cal_gamma_full[i,"capital_cost"]/(ig_tot_df_2[i,"total_demand"]*10^6)
-  cal_gamma[i,"labour_gamma"] <- cal_gamma_full[i,"labour_cost"]/(ig_tot_df_2[i,"total_demand"]*10^6)
+  cal_gamma_full[i,"capital_gamma"] <- cal_gamma_full[i,"capital_cost"]/(ig_tot_df_2[i,"total_demand"]*10^6)
+  cal_gamma_full[i,"labour_gamma"] <- cal_gamma_full[i,"labour_cost"]/(ig_tot_df_2[i,"total_demand"]*10^6)
   
   
 }
