@@ -5,6 +5,7 @@
 ## Benchmark Year
 
 Bench_year <- 2015
+Interst_rate <- 0.02
 
 ## Code Blocks ---------
 
@@ -12,3 +13,7 @@ Bench_year <- 2015
 source("01_Packages.R")
 ## Data
 source("02_read_data_v1.R")
+## Calibration
+source("03_Calibration_v1.R")
+
+## General Equilibrium Functions
