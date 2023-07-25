@@ -25,7 +25,7 @@ cal_gamma <- data.frame("Sectors" = sectors,
                         "capital_gamma" = rep(0),
                         "labour_gamma" = rep(0)) %>% 
   left_join(sala_df, by = "Sectors") %>% 
-  mutate(capital_price = Interst_rate) %>%
+  mutate(capital_price = Interest_rate) %>%
   mutate( capital_cost = 0)  %>% 
   mutate(capital = 0) %>% 
   mutate(labour = 0) %>% 
@@ -36,10 +36,12 @@ for(i in 1:nrow(cal_gamma)){
   
   cal_gamma[i,"capital"] <- prim_2015_df[4,i+2]*10^6
   cal_gamma[i,"labour"] <- prim_2015_df[5,i+2]
+  cal_gamma[i,"salary"] <- cal_gamma[i,"salary"] /(1-effective_tax)
   cal_gamma[i,"capital_cost"] <- cal_gamma[i,"capital"]*cal_gamma[i,"capital_price"]
   cal_gamma[i,"labour_cost"] <- cal_gamma[i,"labour"]*cal_gamma[i,"salary"]
   
 }
+
 
 ## 1.2 M_Bar ----------------
 
@@ -53,11 +55,15 @@ ig_sum_df_temp <- ig_sum_df %>%
   select(Sector, Households) %>% 
   rename(sectors = Sector) %>% 
   mutate(ratio = Households/sum(Households)) %>% 
-  mutate(total_exp = m_bar) %>% 
-  mutate(HH_exp = ratio*total_exp)
+  mutate(int_total = ig_sum_df_3[,"Int_total"]*10^6)
+  
+m_bar/sum(ig_sum_df_temp[,"int_total"]) 
+
+
+
+mutate(total_exp = m_bar) 
 
 ## include the intermediate goods
-
 ig_tot_df_temp <- ig_tot_df %>% 
   select(-Sectors)
 
@@ -72,15 +78,25 @@ for(i in 1:nrow(ig_tot_df_temp)){
   
 }
 
+
+
+ig_tot_total <- sum(ig_tot_df_temp[, "in_tot"]) *10^6
+
+m_bar > ig_tot_total
+
 ig_sum_df_temp_2 <- ig_sum_df_temp %>% 
-  mutate(in_tot = ig_tot_df_temp[, "in_tot"]* 10^6) %>% 
-  mutate(total_supply = HH_exp+in_tot)
+  mutate(in_tot = ig_tot_df_temp[, "in_tot"]* 10^6) %>%
+  mutate(in_tot_total = ig_tot_total) 
+  mutate(total_supply = HH_exp+in_tot)%>% 
+  mutate(HH_exp = ratio*total_exp)
 
 
 ## 1.3 Gamma Part 2 -----------------
 
 cal_gamma <- cal_gamma %>% 
-  mutate(total_supply = ig_sum_df_temp_2[,"total_supply"]) 
+  mutate(total_supply = ig_sum_df_temp_2[,"total_supply"]) %>% 
+  mutate(labour_gamma_2 = 0) %>% 
+  mutate(capital_gamma_2 = 0)
 
 
 ## this needs to change
@@ -88,6 +104,9 @@ for(i in 1:nrow(cal_gamma)){
   
   cal_gamma[i,"capital_gamma"] <- cal_gamma[i,"capital_cost"]/cal_gamma[i,"total_supply"]
   cal_gamma[i,"labour_gamma"] <- cal_gamma[i,"labour_cost"]/cal_gamma[i,"total_supply"]
+  cal_gamma[i,"capital_gamma_2"] <- cal_gamma[i,"capital"]/cal_gamma[i,"total_supply"]
+  cal_gamma[i,"labour_gamma_2"] <- cal_gamma[i,"labour"]/cal_gamma[i,"total_supply"]
+  
   
   
 }
@@ -117,7 +136,7 @@ for(i in 1:nrow(cal_beta)){
   for(j in 1:ncol(cal_beta)){
     
     
-  cal_beta[i,j] <- ig_tot_df_2[i,j+1]/ig_tot_df_2[i,"total_supply"]
+  cal_beta[i,j] <- ig_tot_df_2[i,j+1]/ig_tot_df_2[j,"total_supply"]
   }
   
 }
@@ -158,6 +177,7 @@ for(i in 1:nrow(cal_a_j)){
   cal_a_j[i,"a_j"] <- (cal_gamma_2[i,"total_supply"])/prod(X_ij_b_ij[,i], cal_gamma_2[i,"capital_raised"],cal_gamma_2[i,"labour_raised"])
   
 }
+
 
 ## 1.6 Vj_bar ---------------------------
 

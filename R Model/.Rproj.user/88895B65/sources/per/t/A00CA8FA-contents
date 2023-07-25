@@ -59,6 +59,20 @@ ig_sum_df_2[,2] <- as.numeric(ig_sum_df_2[,2])
 
 sectors <- unique(ig_sum_df_2[,"Sectors"])
 
+ig_sum_df_3 <- ig_sum_df
+
+colnames(ig_sum_df_3) <- c("Sectors",
+                           "Int_total",
+                           "Households",
+                           "Government",
+                           "Capital_increase",
+                           "Total_demand",
+                           "Exports")
+ig_sum_df_4 <- ig_sum_df_3 %>% 
+  mutate(export_ratio = Exports/Total_demand) %>% 
+  mutate(new_int_good = 0)
+
+
 ## 3.3 Output_totals ------------------
 
 for(j in 2:ncol(ig_tot_df)){
@@ -66,6 +80,24 @@ for(j in 2:ncol(ig_tot_df)){
   ig_tot_df[,j] <- as.numeric(ig_tot_df[,j])
   
 }
+
+## Remove exports from ig_tot
+ig_tot_aut_df <-ig_tot_df
+
+##aurtuky data frame
+for(j in 2:ncol(ig_tot_aut_df)){
+  
+  ig_tot_aut_df[,j] <- ig_tot_aut_df[,j]*(1-ig_sum_df_4[j-1,"export_ratio"])
+  ig_tot_aut_df[,j] <- ig_tot_aut_df[,j] *10^6
+}
+
+for(i in 1:nrow(ig_sum_df_4)){
+  
+  ig_sum_df_4[i,"new_int_good"] <- sum(ig_tot_aut_df[i,2:ncol(ig_tot_aut_df)])
+  
+}
+
+aut_ig_total <- sum(ig_sum_df_4[,"new_int_good"])
 
 ## 3.4 Primary Factors -------------
 
