@@ -3,7 +3,7 @@
     "path": "F:/My Drive/EMAP/101 Dissertation/Dissertation/R Model/02_read_data_v1.R",
     "project_path": "02_read_data_v1.R",
     "type": "r_source",
-    "hash": "3364314751",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1690199778635.0,
@@ -12,8 +12,8 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "7,0",
-        "scrollLine": "0"
+        "cursorPosition": "69,0",
+        "scrollLine": "44"
     },
     "folds": "",
     "lastKnownWriteTime": 1690210279,

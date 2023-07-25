@@ -1,4 +1,10 @@
 ## 03_Calibration_v1.R ---------------
+## Notes on version of calibration:
+
+## this version does not include:
+## saving rate
+## government
+
 
 ## Calibration Calculations:
 
