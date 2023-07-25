@@ -5,7 +5,7 @@
 ## Benchmark Year
 
 Bench_year <- 2015
-Interst_rate <- 0.02
+Interest_rate <- 0.02
 
 ## Code Blocks ---------
 
