@@ -67,3 +67,24 @@ demand_hh_df<- ig_sum_df %>%
 ## 1.2 A_c ---------------
 
 cal_a_c  <- total_expenditure/prod(house_ult_df[,"g_i.alpha_i"])
+
+
+## old CGE function test data
+
+
+prices_test <- rep(1,length(sectors))
+capital_price_test <- rep(Interest_rate,length(sectors))
+output_test <- cal_gamma_2[,"total_supply"]
+labour_test <- cal_gamma_2[,"labour"]
+salary_test <- cal_gamma_2[,"salary_new"]
+primary_price_test <- data.frame("capital_price" = capital_price_test,
+                                 "labour_price" = salary_test)
+alpha_test <- cal_HH_utl[,"alpha_i"]
+capital_test <- cal_gamma_2[,"capital"]
+gamma_capital_test <- cal_gamma_2[,"capital_gamma"]
+gamma_labour_test <- cal_gamma_2[,"labour_gamma"]
+gamma_test <- cal_gamma_2[,c("capital_gamma","labour_gamma")]
+m_test <- m_bar
+vj_test <- cal_vj_bar[,"vj_bar"]
+Aj_test <- cal_a_j[,"a_j"]
+beta_test <- cal_beta

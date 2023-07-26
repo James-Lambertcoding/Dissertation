@@ -55,3 +55,25 @@ for(i in 1:nrow(ig_amt_aut)){
 }
 
 aut_ig_total <- sum(ig_sum_aut[,"new_int_good"])
+
+## demand ratio
+demand_ratio_2015 <- ig_sum_aut[,"Households"]/sum(ig_sum_aut[,"Households"])
+
+
+prim_2015_df <- prim_df %>% 
+  filter(Year == 2015)
+
+## labour and capital dataframe
+
+primary_factor_2015 <- data.frame("sectors"=sectors,
+                                  "capital" = rep(0),
+                                  "labour" = rep(0))
+
+for(i in 1:nrow(primary_factor_2015)){
+  
+  primary_factor_2015[i,"capital"] <- prim_2015_df[4,i+2]*10^6
+  primary_factor_2015[i,"labour"] <- prim_2015_df[5,i+2]/(1-effective_tax)
+  
+  
+}
+

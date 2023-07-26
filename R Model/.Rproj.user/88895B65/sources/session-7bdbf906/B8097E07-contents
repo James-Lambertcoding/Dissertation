@@ -161,67 +161,89 @@ function_delta_m <- function(salary, labour, capital, interest_rate, m_tot){
   
 ## 2.0 Test Data--------------
 
-prices_test <- rep(1,length(sectors))
-capital_price_test <- rep(Interest_rate,length(sectors))
-output_test <- cal_gamma_2[,"total_supply"]
-labour_test <- cal_gamma_2[,"labour"]
-salary_test <- cal_gamma_2[,"salary_new"]
-primary_price_test <- data.frame("capital_price" = capital_price_test,
-                                 "labour_price" = salary_test)
-alpha_test <- cal_HH_utl[,"alpha_i"]
-capital_test <- cal_gamma_2[,"capital"]
-gamma_capital_test <- cal_gamma_2[,"capital_gamma"]
-gamma_labour_test <- cal_gamma_2[,"labour_gamma"]
-gamma_test <- cal_gamma_2[,c("capital_gamma","labour_gamma")]
-m_test <- m_bar
-vj_test <- cal_vj_bar[,"vj_bar"]
-Aj_test <- cal_a_j[,"a_j"]
-beta_test <- cal_beta
-
-## need the wage and capital cost in the gamma
-#gamma_capital_test2 <- cal_gamma_2[,"capital_gamma_2"]
-#gamma_labour_test2 <- cal_gamma_2[,"labour_gamma_2"]
-
-
-
-
+function_test_delta <- function(test_function_cal){
+  
+  
 ## 2.1 test_C ----------------------
-test_c <- function_delta_c_i(alpha = alpha_test,
-                             beta = beta_test,
-                             price = prices_test,
-                             output = output_test,
-                             labour = labour_test,
-                             salary = salary_test,
-                             capital = capital_test, 
+  test_c <- function_delta_c_i(alpha = test_function_cal[[1]],
+                             beta = test_function_cal[[3]],
+                             price = test_function_cal[[7]],
+                             output = test_function_cal[[8]],
+                             labour = test_function_cal[[9]],
+                             salary = test_function_cal[[10]],
+                             capital = test_function_cal[[11]], 
                              interest_rate = Interest_rate)
 
 ## 2.2 test_F ----------------------
-test_F <- function_delta_F_f(gamma_capital =  gamma_capital_test,
-                             gamma_labour = gamma_labour_test,
-                             price = prices_test,
-                             output = output_test,
-                             capital_price = capital_price_test,
-                             labour_price = salary_test,
-                             capital =  capital_test,
-                             labour = labour_test)
+  test_F <- function_delta_F_f(gamma_capital =  test_function_cal[[4]][,1],
+                             gamma_labour = test_function_cal[[4]][,2],
+                             price = test_function_cal[[7]],
+                             output = test_function_cal[[8]],
+                             capital_price = test_function_cal[[12]][,1],
+                             labour_price = test_function_cal[[10]],
+                             capital =  test_function_cal[[11]],
+                             labour = test_function_cal[[9]])
 
 ## 2.2 test_pi ----------------------
 
-test_pi <- function_delta_pi_j(price = prices_test,
-                               A_j = Aj_test,
-                               beta = beta_test,
-                               primary_costs = primary_price_test,
-                               gamma_capital =  gamma_capital_test,
-                               gamma_labour = gamma_labour_test)
+  test_pi <- function_delta_pi_j(price = test_function_cal[[7]],
+                               A_j = test_function_cal[[5]],
+                               beta = test_function_cal[[3]],
+                               primary_costs = test_function_cal[[12]],
+                               gamma_capital =  test_function_cal[[4]][,1],
+                               gamma_labour = test_function_cal[[4]][,2])
 
 ## 2.4 test_m ----------------------
-test_m <- function_delta_m(salary = salary_test,
-                           labour = labour_test,
-                           capital = capital_test,
+  test_m <- function_delta_m(salary = test_function_cal[[10]],
+                           labour = test_function_cal[[9]],
+                           capital = test_function_cal[[11]],
                            interest_rate = Interest_rate,
-                           m_tot = m_test
+                           m_tot = test_function_cal[[13]]
                             )
+  
+  # results_list <- list()
+  # 
+  # results_list[[1]] <- test_c
+  # results_list[[2]] <- test_F
+  # results_list[[3]] <- test_pi
+  # results_list[[4]] <- test_m
+  
+  
+  max_pi <- max(test_pi)
+  min_pi <- min(test_pi)  
+  
+  print(test_function_cal[[7]])
 
+  max_price <-max(test_function_cal[[7]])
+  min_price <- min(test_function_cal[[7]])
+  
+  new_prices <- rep(1, length(sectors))
+  
+  new_price_df <- data.frame("price" = new_prices,
+                             "direction" =  rep(0),
+                             "change" = rep(0))
+  
+  
+  for(i in 1:length(sectors)){
+    print(test_pi[i])
+    if(test_pi[i] > 0){
+      
+      new_price_df[i,1] <- test_function_cal[[7]][i]-((1/alter_factor)*(test_pi[i]/max_pi))
+      new_price_df[i,2] <- "down"
+      new_price_df[i,3] <- test_pi[i]/max_pi
+      
+    } else{
+      
+      new_price_df[i,1] <- test_function_cal[[7]][i] + (test_pi[i]/min_pi)
+      new_price_df[i,2] <- "up"
+      new_price_df[i,3] <- test_pi[i]/min_pi
+      }
+    
+  }
+  
+  return(new_price_df)
+  
+  }
 
 
 
