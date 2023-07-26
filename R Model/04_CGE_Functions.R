@@ -95,24 +95,43 @@ function_delta_pi_j <- function(price, A_j, beta, gamma_capital, gamma_labour, p
     mutate(step_2_j = w_g_g1 * w_g_g2)
     
   
-  for(j in 1:length(sectors)){
+  step_1_df <- beta 
+  step_1_vec <- rep(0,nrow(beta))
+  
+  for(j in 1:ncol(step_1_df)){
+    for(i in 1:nrow(step_1_df)){
+      
+      step_1_df[i,j] <- (price[i]/step_1_df[i,j])^step_1_df[i,j]
+      
+    }
+    step_1_vec[j] <- prod(step_1_df[,j])
+      
+  }
+  
+  for(j in 1:nrow(beta)){
     
-    step_1_list[[j]] <- beta %>% 
-      mutate(prices = price) 
-    
-    step_1_list[[j]] <- step_1_list[[j]][,c(j,ncol(step_1_list[[j]]))]
-    
-    colnames(step_1_list[[j]])[1] <- "beta_j"
-    
-   
-    
-    step_1_list[[j]] <- step_1_list[[j]] %>% 
-      ##p_b_b = price/ beta raised to beta
-      mutate(p_b_b = (price/beta_j)^beta_j)
-    
-   delta_pi[j] <- delta_pi[j] - A_j[j]*prod(step_1_list[[j]][,"p_b_b"])*step_2_df[j,"step_2_j"]
+    delta_pi[j] <- price[j] - (A_j[j]* step_1_vec[j] *step_2_df[j,"step_2_j"])
     
   }
+  
+  # for(j in 1:length(sectors)){
+  #   
+  #   step_1_list[[j]] <- beta %>% 
+  #     mutate(prices = price) 
+  #   
+  #   step_1_list[[j]] <- step_1_list[[j]][,c(j,ncol(step_1_list[[j]]))]
+  #   
+  #   colnames(step_1_list[[j]])[1] <- "beta_j"
+  #   
+  #  
+  #   
+  #   step_1_list[[j]] <- step_1_list[[j]] %>% 
+  #     ##p_b_b = price/ beta raised to beta
+  #     mutate(p_b_b = (price/beta_j)^beta_j)
+  #   
+  #  delta_pi[j] <- delta_pi[j] - A_j[j]*prod(step_1_list[[j]][,"p_b_b"])*step_2_df[j,"step_2_j"]
+  #   
+  # }
   
   
  #return(step_2_df) 
@@ -146,7 +165,7 @@ prices_test <- rep(1,length(sectors))
 capital_price_test <- rep(Interest_rate,length(sectors))
 output_test <- cal_gamma_2[,"total_supply"]
 labour_test <- cal_gamma_2[,"labour"]
-salary_test <- cal_gamma_2[,"salary"]
+salary_test <- cal_gamma_2[,"salary_new"]
 primary_price_test <- data.frame("capital_price" = capital_price_test,
                                  "labour_price" = salary_test)
 alpha_test <- cal_HH_utl[,"alpha_i"]
@@ -159,6 +178,13 @@ vj_test <- cal_vj_bar[,"vj_bar"]
 Aj_test <- cal_a_j[,"a_j"]
 beta_test <- cal_beta
 
+## need the wage and capital cost in the gamma
+#gamma_capital_test2 <- cal_gamma_2[,"capital_gamma_2"]
+#gamma_labour_test2 <- cal_gamma_2[,"labour_gamma_2"]
+
+
+
+
 ## 2.1 test_C ----------------------
 test_c <- function_delta_c_i(alpha = alpha_test,
                              beta = beta_test,
@@ -167,7 +193,7 @@ test_c <- function_delta_c_i(alpha = alpha_test,
                              labour = labour_test,
                              salary = salary_test,
                              capital = capital_test, 
-                             interest_rate = Interst_rate)
+                             interest_rate = Interest_rate)
 
 ## 2.2 test_F ----------------------
 test_F <- function_delta_F_f(gamma_capital =  gamma_capital_test,
@@ -177,8 +203,7 @@ test_F <- function_delta_F_f(gamma_capital =  gamma_capital_test,
                              capital_price = capital_price_test,
                              labour_price = salary_test,
                              capital =  capital_test,
-                             labour = labour_test
-                             )
+                             labour = labour_test)
 
 ## 2.2 test_pi ----------------------
 
@@ -193,7 +218,7 @@ test_pi <- function_delta_pi_j(price = prices_test,
 test_m <- function_delta_m(salary = salary_test,
                            labour = labour_test,
                            capital = capital_test,
-                           interest_rate = Interst_rate,
+                           interest_rate = Interest_rate,
                            m_tot = m_test
                             )
 

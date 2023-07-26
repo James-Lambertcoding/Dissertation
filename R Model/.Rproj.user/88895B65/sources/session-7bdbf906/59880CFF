@@ -3,7 +3,7 @@
     "path": "F:/My Drive/EMAP/101 Dissertation/Dissertation/R Model/10_simple_version.R",
     "project_path": "10_simple_version.R",
     "type": "r_source",
-    "hash": "1744657048",
+    "hash": "2050337923",
     "contents": "",
     "dirty": false,
     "created": 1690287581043.0,
@@ -13,15 +13,16 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "20,34",
-        "scrollLine": "9"
+        "cursorPosition": "86,0",
+        "scrollLine": "61",
+        "docOutlineVisible": "1"
     },
     "folds": "",
-    "lastKnownWriteTime": 1690288844,
+    "lastKnownWriteTime": 1690368474,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1690288844277,
+    "last_content_update": 1690368474307,
     "read_only": false,
     "read_only_alternatives": []
 }
