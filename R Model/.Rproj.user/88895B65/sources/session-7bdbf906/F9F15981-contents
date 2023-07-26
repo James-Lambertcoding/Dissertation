@@ -42,7 +42,7 @@ sectors_cal_test <- sectors
 
 ## run calibration on start
 
-test_function_cal <- function_calibration(price = price_cal_test,
+test_function_cal_first <- function_calibration(price = price_cal_test,
                                           labour = labour_cal_test, 
                                           capital = capital_cal_test,
                                           inter_goods = inter_goods_cal_test,
@@ -54,7 +54,9 @@ test_function_cal <- function_calibration(price = price_cal_test,
 
 test_function_cal[[7]]
 
-test_delta_function <- function_test_delta(test_function_cal = test_function_cal)
+test_delta_function <- function_test_delta(test_function_cal = test_function_cal_first)
+
+length(test_delta_function[[3]])
 
 for(k in 1:runs){
   

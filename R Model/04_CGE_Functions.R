@@ -98,6 +98,8 @@ function_delta_pi_j <- function(price, A_j, beta, gamma_capital, gamma_labour, p
   step_1_df <- beta 
   step_1_vec <- rep(0,nrow(beta))
   
+  print(nrow(step_1_df))
+  
   for(j in 1:ncol(step_1_df)){
     for(i in 1:nrow(step_1_df)){
       
@@ -163,7 +165,6 @@ function_delta_m <- function(salary, labour, capital, interest_rate, m_tot){
 
 function_test_delta <- function(test_function_cal){
   
-  
 ## 2.1 test_C ----------------------
   test_c <- function_delta_c_i(alpha = test_function_cal[[1]],
                              beta = test_function_cal[[3]],
@@ -201,13 +202,13 @@ function_test_delta <- function(test_function_cal){
                            m_tot = test_function_cal[[13]]
                             )
   
-  # results_list <- list()
-  # 
-  # results_list[[1]] <- test_c
-  # results_list[[2]] <- test_F
-  # results_list[[3]] <- test_pi
-  # results_list[[4]] <- test_m
-  
+  results_list <- list()
+
+  results_list[[1]] <- test_c
+  results_list[[2]] <- test_F
+  results_list[[3]] <- test_pi
+  results_list[[4]] <- test_m
+
   
   max_pi <- max(test_pi)
   min_pi <- min(test_pi)  
@@ -225,14 +226,14 @@ function_test_delta <- function(test_function_cal){
   
   
   for(i in 1:length(sectors)){
-    print(test_pi[i])
+    
     if(test_pi[i] > 0){
       
       new_price_df[i,1] <- test_function_cal[[7]][i]-((1/alter_factor)*(test_pi[i]/max_pi))
       new_price_df[i,2] <- "down"
       new_price_df[i,3] <- test_pi[i]/max_pi
       
-    } else{
+    } else {
       
       new_price_df[i,1] <- test_function_cal[[7]][i] + (test_pi[i]/min_pi)
       new_price_df[i,2] <- "up"
@@ -241,7 +242,7 @@ function_test_delta <- function(test_function_cal){
     
   }
   
-  return(new_price_df)
+  return(results_list)
   
   }
 
