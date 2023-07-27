@@ -20,6 +20,10 @@ sala_df <- read.csv(file= sala_name, stringsAsFactors = F)
 
 ## 3.0 Manipulation ------------
 
+
+
+
+
 colnames(ig_sum_df) <- c("Sectors",
                            "Int_total",
                            "Households",
@@ -27,6 +31,8 @@ colnames(ig_sum_df) <- c("Sectors",
                            "Capital_increase",
                            "Total_demand",
                            "Exports")
+## Override C33 0
+ig_sum_df[23,"Households"] <-1
 
 sectors <- unique(ig_sum_df[,"Sectors"])
 
@@ -77,3 +83,9 @@ for(i in 1:nrow(primary_factor_2015)){
   
 }
 
+## production ratios from ONS
+
+ig_coef_sum <- ig_coef_df %>% 
+  select(-Sector)
+
+rownames(ig_coef_sum) <- colnames(ig_coef_sum)

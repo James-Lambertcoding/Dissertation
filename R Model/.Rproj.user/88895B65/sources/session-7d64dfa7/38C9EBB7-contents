@@ -88,3 +88,10 @@ m_test <- m_bar
 vj_test <- cal_vj_bar[,"vj_bar"]
 Aj_test <- cal_a_j[,"a_j"]
 beta_test <- cal_beta
+
+## removed from delta c
+
+temp_primary_tot_1 <- sum(temp_primary_factor_df[,"labour_cost"])
+temp_primary_tot_2 <- sum(temp_primary_factor_df[,"capital_cost"])
+
+

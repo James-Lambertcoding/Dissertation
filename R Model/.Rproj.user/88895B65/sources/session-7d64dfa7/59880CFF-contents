@@ -7,10 +7,10 @@
 iot_simple <- data.frame("x.1" = c(0,0,0),
                          "x.2" = c(0,0,0),
                          "x.3" = c(0,0,0), 
-                         "final_demand" = c(20,20,20),
+                         "final_demand" = c(40,20,20),
                          "labour" = c(20,20,20),
-                         "price" = c(2,2,2),
-                         "salary" = c(2,2,2)) %>% 
+                         "price" = c(1,1,1),
+                         "salary" = c(1,1,1)) %>% 
   mutate(int_demand = x.1 + x.2 +x.3) %>% 
   mutate(total_demand = (final_demand + int_demand))
 

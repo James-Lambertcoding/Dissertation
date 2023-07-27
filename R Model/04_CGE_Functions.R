@@ -13,7 +13,7 @@ function_delta_c_i <- function(alpha, beta, price, output, salary, labour, capit
     
     for (j in 1:nrow(beta)) {
       
-      delta_c[i]  <- delta_c[i] +   ( beta[i,j]*price[j]*output[j])
+      delta_c[i]  <- delta_c[i] +   ( beta[j,i]*price[j]*output[j])
       
     }
     
@@ -23,18 +23,19 @@ function_delta_c_i <- function(alpha, beta, price, output, salary, labour, capit
   temp_primary_factor_df <- data.frame("labour" = labour,
                                        "Salary" = salary,
                                        "capital" = capital,
-                                       "capital_price" = rep(interest_rate)) %>% 
+                                       "capital_price" = rep(interest_rate),
+                                       "alpha" = alpha) %>% 
     mutate(labour_cost = labour * salary) %>% 
-    mutate(capital_cost = capital * interest_rate)
+    mutate(capital_cost = capital * interest_rate) %>% 
+    mutate(step_2 = alpha * (labour_cost+capital_cost))
   
-  temp_primary_tot_1 <- sum(temp_primary_factor_df[,"labour_cost"])
-  temp_primary_tot_2 <- sum(temp_primary_factor_df[,"capital_cost"])
+
   
-  temp_primary_tot <- temp_primary_tot_1 + temp_primary_tot_2
+
   
   for(i in 1:length(sectors)){
     
-    delta_c[i]  <- delta_c[i] + alpha[i]*temp_primary_tot
+    delta_c[i]  <- delta_c[i] + temp_primary_factor_df[i,"step_2"]
     
   }
   
@@ -74,12 +75,14 @@ function_delta_F_f <- function(gamma_capital,gamma_labour,price,output,capital_p
   
 }
 
-function_delta_pi_j <- function(price, A_j, beta, gamma_capital, gamma_labour, primary_costs){
+function_delta_pi_j <- function(price, A_j, beta, gamma_capital, gamma_labour, primary_costs,runs){
+  
+
   
   delta_pi <- rep(0, length(sectors))
   
   ## first part
-  delta_pi[j] <- price[j]
+  delta_pi <- price
   
   ## second part
   step_1_list <- list()
@@ -98,7 +101,7 @@ function_delta_pi_j <- function(price, A_j, beta, gamma_capital, gamma_labour, p
   step_1_df <- beta 
   step_1_vec <- rep(0,nrow(beta))
   
-  print(nrow(step_1_df))
+  
   
   for(j in 1:ncol(step_1_df)){
     for(i in 1:nrow(step_1_df)){
@@ -110,11 +113,14 @@ function_delta_pi_j <- function(price, A_j, beta, gamma_capital, gamma_labour, p
       
   }
   
+
   for(j in 1:nrow(beta)){
     
     delta_pi[j] <- price[j] - (A_j[j]* step_1_vec[j] *step_2_df[j,"step_2_j"])
     
   }
+  
+  print(delta_pi)
   
   # for(j in 1:length(sectors)){
   #   
@@ -163,7 +169,7 @@ function_delta_m <- function(salary, labour, capital, interest_rate, m_tot){
   
 ## 2.0 Test Data--------------
 
-function_test_delta <- function(test_function_cal){
+function_test_delta <- function(test_function_cal,runs){
   
 ## 2.1 test_C ----------------------
   test_c <- function_delta_c_i(alpha = test_function_cal[[1]],
@@ -192,7 +198,8 @@ function_test_delta <- function(test_function_cal){
                                beta = test_function_cal[[3]],
                                primary_costs = test_function_cal[[12]],
                                gamma_capital =  test_function_cal[[4]][,1],
-                               gamma_labour = test_function_cal[[4]][,2])
+                               gamma_labour = test_function_cal[[4]][,2],
+                               runs = runs)
 
 ## 2.4 test_m ----------------------
   test_m <- function_delta_m(salary = test_function_cal[[10]],
@@ -201,48 +208,99 @@ function_test_delta <- function(test_function_cal){
                            interest_rate = Interest_rate,
                            m_tot = test_function_cal[[13]]
                             )
+  ## Debugging purposes
   
-  results_list <- list()
+  # results_list <- list()
+  # 
+  # results_list[[1]] <- test_c
+  # results_list[[2]] <- test_F
+  # results_list[[3]] <- test_pi
+  # results_list[[4]] <- test_m
 
-  results_list[[1]] <- test_c
-  results_list[[2]] <- test_F
-  results_list[[3]] <- test_pi
-  results_list[[4]] <- test_m
-
+## 2.5 Changes -----------------------
+  
+  ## once the deltas are calculated the Z vector has to be changed
+  ## the constant in this is W the wage amount
+  
+  ## 2.5.1 New prices -----------------
   
   max_pi <- max(test_pi)
   min_pi <- min(test_pi)  
   
-  print(test_function_cal[[7]])
-
+  
   max_price <-max(test_function_cal[[7]])
   min_price <- min(test_function_cal[[7]])
   
+  new_max_price <- max_price*alter_factor
+  new_min_price <- min_price/alter_factor
+  
+  
   new_prices <- rep(1, length(sectors))
   
-  new_price_df <- data.frame("price" = new_prices,
-                             "direction" =  rep(0),
-                             "change" = rep(0))
-  
+  # new_price_df <- data.frame("price" = new_prices,
+  #                            "direction" =  rep(0),
+  #                            "change" = rep(0))
+
   
   for(i in 1:length(sectors)){
     
+    
+      
+      
     if(test_pi[i] > 0){
       
-      new_price_df[i,1] <- test_function_cal[[7]][i]-((1/alter_factor)*(test_pi[i]/max_pi))
-      new_price_df[i,2] <- "down"
-      new_price_df[i,3] <- test_pi[i]/max_pi
+      new_prices[i] <- test_function_cal[[7]][i] - ((test_function_cal[[7]][i]-new_min_price)*(test_pi[i]/max_pi))
       
-    } else {
+      # new_price_df[i,1] <- test_function_cal[[7]][i]-((1/alter_factor)*(test_pi[i]/max_pi))
+      # new_price_df[i,2] <- "down"
+      # new_price_df[i,3] <- test_pi[i]/max_pi
       
-      new_price_df[i,1] <- test_function_cal[[7]][i] + (test_pi[i]/min_pi)
-      new_price_df[i,2] <- "up"
-      new_price_df[i,3] <- test_pi[i]/min_pi
+    } else if(test_pi[i] < 0) {
+      
+      new_prices[i] <- test_function_cal[[7]][i] + ((new_max_price-test_function_cal[[7]][i])*(test_pi[i]/min_pi))
+      
+      # new_price_df[i,1] <- test_function_cal[[7]][i] + (test_pi[i]/min_pi)
+      # new_price_df[i,2] <- "up"
+      # new_price_df[i,3] <- test_pi[i]/min_pi
       }
+    
+  } 
+  
+  ## check how deltas are evoling
+  
+  delta_amount <- rep(0,4)
+  
+  for(i in length(test_c)){
+    
+    delta_amount[1] <- delta_amount[1]+ abs(test_c[i])
     
   }
   
-  return(results_list)
+  for(i in length(test_F)){
+    
+    delta_amount[2] <- delta_amount[2]+ abs(test_F[i])
+    
+  }
+  
+  for(i in length(test_pi)){
+    
+    delta_amount[3] <- delta_amount[3]+ abs(test_pi[i])
+    
+  }
+  
+  for(i in length(test_m)){
+    
+    delta_amount[4] <- delta_amount[4]+ abs(test_m[i])
+    
+  }
+  
+  return_list <- list()
+
+  return_list[[1]] <- new_prices
+  return_list[[2]] <- delta_amount
+  
+  
+  return(return_list)
   
   }
 
