@@ -20,14 +20,14 @@ function_calibration_3 <- function(price,             # vector
                                    inter_goods_coef,  # matrix
                                    inter_totals,      # vector
                                    salary,            # vector
-                                   interest_rate,     # number 
+                                   interest_rate,     # vector 
                                    demand_ratio,      # vector
                                    sectors            # vector - name
 ){
   ## 1.1 Gamma Part 1 -------------
   cal_gamma <- data.frame("Sectors" = sectors,
                           "capital" = capital,
-                          "capital_price" = rep(interest_rate),
+                          "capital_price" = interest_rate,
                           "capital_cost" = rep(0),
                           "capital_gamma" = rep(0),
                           "labour" = labour,
@@ -139,7 +139,7 @@ function_calibration_3 <- function(price,             # vector
   
   ## 1.7 Misc ------------
   
-  primary_price_test <- data.frame("capital_price" = rep(interest_rate,length(sectors)),
+  primary_price_test <- data.frame("capital_price" = interest_rate,
                                    "labour_price" = salary)
   
   
@@ -225,8 +225,8 @@ function_calibration_3 <- function(price,             # vector
   
   re_cal <- re_cal %>% 
     mutate(new_labour_cost = new_labour*salary) %>% 
-    mutate(new_gamma_labour = new_labour_cost/total_supply) %>% 
-    mutate(new_gamma_capital = capital_cost/total_supply) %>% 
+    mutate(new_gamma_labour = new_labour/total_supply) %>% 
+    mutate(new_gamma_capital = capital/total_supply) %>% 
     mutate(new_labour_raised = new_labour^new_gamma_labour) %>% 
     mutate(new_capital_raised = capital^new_gamma_capital)  
     
@@ -237,6 +237,14 @@ function_calibration_3 <- function(price,             # vector
   ## x_ij raised to gamma
   
   x_ij <- new_int_goods
+  
+  new_inter_good_sum <- rep(0,length(sectors))
+  
+  for(i in 1:length(new_inter_good_sum)){
+    
+    new_inter_good_sum[i] <- sum(x_ij[i,])
+    
+  }
   
   rownames(x_ij) <- colnames(x_ij)
   
@@ -283,28 +291,24 @@ function_calibration_3 <- function(price,             # vector
   cal_list[[7]] <- price
   ## Total Supply
   cal_list[[8]] <- total_supply_df[,"total_supply"]
+  ## New Labour
   cal_list[[9]] <- re_cal[,"new_labour"]
+  ## Salary
   cal_list[[10]] <- salary
+  ## Capital
   cal_list[[11]] <- capital
+  ## Primary Price Data Frame 
   cal_list[[12]] <- primary_price_test
+  ## New M_bar
   cal_list[[13]] <- new_m_bar
-  cal_list[[14]] <- x_ij
-  cal_list[[15]] <- X_ij_b_ij
-  cal_list[[16]] <-
-
+  ## Inter Goods Total
+  cal_list[[14]] <- new_inter_good_sum
+  ## Capital Price
+  cal_list[[15]] <- interest_rate
 
   return(cal_list)
   
 }
 
-test_cal_first[[3]][,23]
 
-test_cal_first <- function_calibration_3(price = price_cal_test,
-                                         labour = labour_cal_test, 
-                                         capital = capital_cal_test,
-                                         inter_goods_coef = ig_coef_sum,
-                                         inter_totals = inter_total_cal_test,
-                                         salary = salary_cal_test,
-                                         interest_rate = interest_rate_cal_test,
-                                         demand_ratio = demand_ratios_cal_test,
-                                         sectors = sectors)
+

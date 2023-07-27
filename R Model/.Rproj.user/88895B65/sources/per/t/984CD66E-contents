@@ -77,9 +77,8 @@ primary_factor_2015 <- data.frame("sectors"=sectors,
 
 for(i in 1:nrow(primary_factor_2015)){
   
-  primary_factor_2015[i,"capital"] <- prim_2015_df[4,i+2]*10^6
+  primary_factor_2015[i,"capital"] <- prim_2015_df[4,i+2]*10^6*(1-ig_sum_aut[i,"export_ratio"])
   primary_factor_2015[i,"labour"] <- prim_2015_df[5,i+2]/(1-effective_tax)
-  
   
 }
 
