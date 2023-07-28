@@ -289,3 +289,27 @@ for(i in 1:length(Sectors_51)){
     test_c <- delta_51_f(cal_51_list = cal_51_list)
     test_pi <- delta_51_pi(cal_51_list = cal_51_list)
     
+    
+    ## 6.0 output test-------------
+    
+    ## check calibration
+    
+    output_test <- rep(0,length(Sectors_51))
+
+    output_df <- x_ij_only
+    
+    for(i in 1:nrow(output_df)){
+      for(j in 1:nrow(output_df)){
+        
+        output_df[i,j] <- x_ij_only[i,j]^b_ij[i,j]
+        
+      }
+      
+    }
+        
+    for(i in 1:length(output_test)){
+      
+      output_test[i] <- prod(output_df[,i])*A_J[i,"A_J"]*A_J[i,"emp_gamma_i"]
+      
+    }
+    

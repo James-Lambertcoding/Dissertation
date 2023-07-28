@@ -8,7 +8,7 @@
 
 labour_tot <- 28764400
 Capital_tot <- 11137120
-interest_rate <- 0.1
+interest_rate <- 1
 capital_returns <- Capital_tot * interest_rate
 
 
@@ -164,8 +164,8 @@ cal_52_list[[3]] <-gamma_i[,"y_i"]
 cal_52_list[[4]] <- gamma_i[,"g_id"]
 ## Alpha 
 cal_52_list[[5]] <- emp_coef_df[,"Coef"]
-## Gamma
-cal_52_list[[6]] <- gamma_i[,"gamma_i"]
+## Gamma_lab
+cal_52_list[[6]] <- gamma_i[,"gamma_lab"]
 ## labour
 cal_52_list[[7]] <- gamma_i[,"labour"]
 ## A_j
@@ -178,6 +178,13 @@ cal_52_list[[10]] <- x_ij_only
 cal_52_list[[11]] <- Sectors_52
 ## Capital Costs
 cal_52_list[[12]] <- gamma_i[,"capital_costs"]
+## Gamma_lab
+cal_52_list[[13]] <- gamma_i[,"gamma_cap"]
+## Capital Price 
+cal_52_list[[14]] <- rep(interest_rate,length(Sectors_52))
+
+
+
 
 ## 5.0 Delta Functions -------------
 
@@ -185,9 +192,11 @@ cal_52_list[[12]] <- gamma_i[,"capital_costs"]
 ## 5.1 Delta C -------------
 delta_52_c <- function(cal_52_list){
   
-  step_1 <- cal_52_list[[9]] %>% 
+  step_1 <- as.data.frame( cal_52_list[[9]]) %>% 
     mutate(prices = cal_52_list[[1]] ) %>% 
     mutate(total_supply = cal_52_list[[3]])
+  
+  print(1)
   
   step_1_sec <- rep(0,length(Sectors_52))
   
@@ -200,7 +209,7 @@ delta_52_c <- function(cal_52_list){
     
   }
   
-  
+  print(2)
   step_2 <-rep(0,length(Sectors_52))
   
   step_2b <- data.frame("wages" = cal_52_list[[2]],
@@ -208,22 +217,26 @@ delta_52_c <- function(cal_52_list){
                         "capital_costs" = cal_52_list[[12]]) %>% 
     mutate(labour_cost = wages *labour)
   
-  step_2b_tot <- sum(step_2b[,"labour_cost"]) + sum(step_2b)
+  print(3)
   
+  step_2b_tot <- sum(step_2b[,"labour_cost"]) + sum(step_2b[,"capital_costs"])
+  
+  print(4)
   for(i in 1:length(Sectors_52)){
     
     step_2[i] <- cal_52_list[[5]][i]*step_2b_tot
     
   }
   
+  print(5)
   delta_52_c <- rep(0,length(Sectors_52))
   
   for(i in 1:length(Sectors_52)){
     
-    delta_52_c[i] <- step_1_sec[i]+step_2b[i]-(cal_52_list[[1]][i]*cal_52_list[[3]][[i]])
+    delta_52_c[i] <- step_1_sec[i]+step_2[i]-(cal_52_list[[1]][i]*cal_52_list[[3]][[i]])
     
   }
-  
+  print(6)
   
   
   return(delta_52_c)
@@ -238,12 +251,19 @@ delta_52_f <- function(cal_52_list){
                        "prices"= cal_52_list[[1]],
                        "total_supply" = cal_52_list[[3]],
                        "wages" = cal_52_list[[2]],
-                       "gamma" = cal_52_list[[6]]) %>% 
-    mutate(step_1 = gamma*prices*total_supply/wages)
+                       "gamma_lab" = cal_52_list[[6]],
+                       "gamma_cap" = cal_52_list[[13]]  ) %>% 
+    mutate(step_1a = gamma_lab*prices*total_supply/wages,
+           step_1b = gamma_cap*prices*total_supply/wages)
   
-  step_1_tot <- sum(step_1[,"step_1"])
+  step_1a_tot <- sum(step_1[,"step_1a"])
+  step_1b_tot <- sum(step_1[,"step_1b"])
   
-  delta_52_f <- step_1_tot - sum(cal_52_list[[7]])
+  delta_52_f <- c(0,0)
+  
+  delta_52_f[1] <- step_1a_tot - sum(cal_52_list[[7]])
+  delta_52_f[2] <- step_1b_tot - sum(cal_52_list[[12]])
+  
   
   return(delta_52_f)
   
@@ -274,12 +294,19 @@ delta_52_pi <- function(cal_52_list){
     
   }
   
-  step_2 <-  cal_52_list[[2]]
-  
-  
+  ## w raised to gamma (labour)
+  step_2a <-  cal_52_list[[2]]
   for(j in 1:length(Sectors_52)){
     
-    step_2[j] <- (cal_52_list[[2]][j]/cal_52_list[[6]][j])^cal_52_list[[6]][j]
+    step_2a[j] <- (cal_52_list[[2]][j]/cal_52_list[[6]][j])^cal_52_list[[6]][j]
+    
+  }
+  
+  ## w raised to gamma (capital)
+  step_2b <-  cal_52_list[[2]]
+  for(j in 1:length(Sectors_52)){
+    
+    step_2b[j] <- (cal_52_list[[14]][j]/cal_52_list[[13]][j])^cal_52_list[[13]][j]
     
   }
   
@@ -287,7 +314,7 @@ delta_52_pi <- function(cal_52_list){
   
   for(j in 1:length(Sectors_52)){
     
-    step_1_2[j] <-  cal_52_list[[8]][j]*step_1_sec[j]*step_2[j]
+    step_1_2[j] <-  cal_52_list[[8]][j]*step_1_sec[j]*step_2a[j]*step_2b[j]
     
   }
   
@@ -303,6 +330,50 @@ delta_52_pi <- function(cal_52_list){
   
 }
 
+## 5.4 Delta M
+
+delta_52_m <- function(cal_52_list){
+  
+  labour_cost <- sum(cal_52_list[[7]] *cal_52_list[[2]])
+  
+  delta_52_m <- sum(cal_52_list[[12]]) +sum(labour_cost) - M_bar
+  
+  return(delta_52_m)
+  
+}
+
+## 5.4 run tests --------
+
 test_f <- delta_52_f(cal_52_list = cal_52_list)    
-test_c <- delta_52_f(cal_52_list = cal_52_list)
+
+test_c <- delta_52_c(cal_52_list = cal_52_list)
+
 test_pi <- delta_52_pi(cal_52_list = cal_52_list)
+
+test_m <- delta_52_m(cal_52_list = cal_52_list )
+
+
+## 6.0 output test-------------
+
+## check calibration
+
+output_test <- rep(0,length(Sectors_51))
+
+output_df <- x_ij_only
+
+for(i in 1:nrow(output_df)){
+  for(j in 1:nrow(output_df)){
+    
+    output_df[i,j] <- x_ij_only[i,j]^b_ij[i,j]
+    
+  }
+  
+}
+
+for(i in 1:length(output_test)){
+  
+  output_test[i] <- prod(output_df[,i])*A_J[i,"A_J"]*A_J[i,"lab_gamma_i"]*A_J[i,"cap_gamma_i"]
+  
+}
+
+write.csv(x = A_J,file = "Simple_Model_outputs/A_j.csv")
