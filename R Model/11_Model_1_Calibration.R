@@ -2,6 +2,7 @@
 
 ## 0.0 Assumptions ----------
 
+library(dplyr)
 ## structure is 5x5 and 5x1
 ## 5 sectors
 ## 1 primary input
@@ -135,7 +136,7 @@ for(i in 1:length(Sectors_51)){
  }   
     
 
-    ## 4.5 Combine Calibration ----------
+## 4.5 Combine Calibration ----------
     
     cal_51_list <- list()
     
@@ -162,10 +163,11 @@ for(i in 1:length(Sectors_51)){
     ## Sectors
     cal_51_list[[11]] <- Sectors_51
     
-    ## 5.0 Delta Functions -------------
+## 5.0 Delta Functions -------------
+  
     
+## 5.1 Delta C -------------
     
-    ## 5.1 Delta C -------------
     delta_51_c <- function(cal_51_list){
       
       step_1 <- cal_51_list[[9]] %>% 
@@ -212,7 +214,7 @@ for(i in 1:length(Sectors_51)){
       
     }
     
-    ## 5.2 Delta F -------------
+## 5.2 Delta F -------------
     
     delta_51_f <- function(cal_51_list){
       
@@ -285,14 +287,31 @@ for(i in 1:length(Sectors_51)){
       
     }
     
-    test_f <- delta_51_f(cal_51_list = cal_51_list)    
-    test_c <- delta_51_f(cal_51_list = cal_51_list)
-    test_pi <- delta_51_pi(cal_51_list = cal_51_list)
+test_f <- delta_51_f(cal_51_list = cal_51_list)    
+test_c <- delta_51_f(cal_51_list = cal_51_list)
+test_pi <- delta_51_pi(cal_51_list = cal_51_list)
+    
+
+
+   
     
     
-    ## 6.0 output test-------------
     
-    ## check calibration
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+## 6.0 output test-------------
+## check calibration
     
     output_test <- rep(0,length(Sectors_51))
 
@@ -312,4 +331,5 @@ for(i in 1:length(Sectors_51)){
       output_test[i] <- prod(output_df[,i])*A_J[i,"A_J"]*A_J[i,"emp_gamma_i"]
       
     }
+    
     
