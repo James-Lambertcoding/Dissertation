@@ -25,8 +25,7 @@ source("02a_Start_point_data.R")
 
 ## Calibration
 source("03_Calibration_v3.R")
-## General Equilibrium Functions
-source("04_CGE_Functions.R")
+
 ## General Equilibrium Functions
 source("04_CGE_Functions_v_2.R")
 
