@@ -36,8 +36,8 @@ good_types_name <- c("Food & non-alcoholic drinks",
                      "Household goods & services",
                      "Health",
                      "Transport",
-                     "Transpoprt - Automotive Vehicles",
-                     "Transpoprt - Other",
+                     "Transport - Automotive Vehicles",
+                     "Transport - Other",
                      "Communication",
                      "Recreation & culture",
                      "Education",
@@ -455,16 +455,16 @@ income_log_price_log_reg_df <- income_log_price_log_reg_df %>%
 
 ## 5.2 Coefs -------------
 ## ML
-write.csv(x = coef_lasso,file = "Output_3/coef_LASSO.csv")
-write.csv(x = coef_ridge,file = "Output_3/coef_Ridge.csv")
-## Linear
-write.csv(x = anova_pr_df,file = "Output_3/Linear Coefs/anova.csv")
-write.csv(x = income_reg_0_df,file = "Output_3/Linear Coefs/income_reg_0_df.csv")
-write.csv(x = income_reg_all_df,file = "Output_3/Linear Coefs/income_reg_all_df.csv")
-write.csv(x = price_reg_df,file = "Output_3/Linear Coefs/price_reg_df.csv")
-write.csv(x = income_price_reg_df,file = "Output_3/Linear Coefs/income_price_reg_df.csv")
-write.csv(x = income_log_reg_df,file = "Output_3/Linear Coefs/income_log_reg_df.csv")
-write.csv(x = income_log_price_log_reg_df,file = "Output_3/Linear Coefs/income_log_price_log_reg_df.csv")
+# write.csv(x = coef_lasso,file = "Output_3/coef_LASSO.csv")
+# write.csv(x = coef_ridge,file = "Output_3/coef_Ridge.csv")
+# ## Linear
+# write.csv(x = anova_pr_df,file = "Output_3/Linear Coefs/anova.csv")
+# write.csv(x = income_reg_0_df,file = "Output_3/Linear Coefs/income_reg_0_df.csv")
+# write.csv(x = income_reg_all_df,file = "Output_3/Linear Coefs/income_reg_all_df.csv")
+# write.csv(x = price_reg_df,file = "Output_3/Linear Coefs/price_reg_df.csv")
+# write.csv(x = income_price_reg_df,file = "Output_3/Linear Coefs/income_price_reg_df.csv")
+# write.csv(x = income_log_reg_df,file = "Output_3/Linear Coefs/income_log_reg_df.csv")
+# write.csv(x = income_log_price_log_reg_df,file = "Output_3/Linear Coefs/income_log_price_log_reg_df.csv")
 
 
 
@@ -472,10 +472,10 @@ write.csv(x = income_log_price_log_reg_df,file = "Output_3/Linear Coefs/income_l
 
 for(i in 1:length(good_types)){
   
-  ggplot2::ggsave(filename = paste0("Output_3/Plots Linear Income/plot_lin_",i,".png"),plot = scatter_plots_line[[i]])
-  ggplot2::ggsave(filename = paste0("Output_3/Plots Log Income/plot_lin_",i,".png"),plot = scatter_plots_log[[i]])
-  ggplot2::ggsave(filename = paste0("Output_3/Plots Price/plot_lin_",i,".png"),plot = scatter_plots_price[[i]])
-  ggplot2::ggsave(filename = paste0("Output_3/Plots No Regression Lines/plot_income_",i,".png"),plot = scatter_plots_income[[i]])
+  ggplot2::ggsave(filename = paste0("Output_3/Plots Linear Income/plot_lin_",i,".png"),plot = scatter_plots_line[[i]], width = 6.17, height =6 )
+  ggplot2::ggsave(filename = paste0("Output_3/Plots Log Income/plot_lin_",i,".png"),plot = scatter_plots_log[[i]],width = 6.17, height =6)
+  ggplot2::ggsave(filename = paste0("Output_3/Plots Price/plot_lin_",i,".png"),plot = scatter_plots_price[[i]],width = 6.17, height =6)
+  ggplot2::ggsave(filename = paste0("Output_3/Plots No Regression Lines/plot_income_",i,".png"),plot = scatter_plots_income[[i]],width = 6.17, height =6)
 
   }
 
